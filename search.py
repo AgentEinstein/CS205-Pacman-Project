@@ -125,6 +125,24 @@ def RecursiveDFS(problem, directions, travelled, current, nodes):
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    from util import Queue
+    start = problem.getStartState()
+    if problem.isGoalState(start):
+        return []
+    frontier = Queue()
+    frontier.push((start, []))
+    visited = set()
+    while not frontier.isEmpty():
+        state, path = frontier.pop()
+        if state in visited:
+            continue
+        visited.add(state)
+        if problem.isGoalState(state):
+            return path
+        for succ, action, step_cost in problem.getSuccessors(state):
+            if succ not in visited:
+                frontier.push((succ, path + [action]))
+    return []
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem) -> List[Directions]:
