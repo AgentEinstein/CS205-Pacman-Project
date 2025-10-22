@@ -90,7 +90,37 @@ def depthFirstSearch(problem: SearchProblem) -> List[Directions]:
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    "Initialize list of directions, nodes travelled, and node stack"
+    directions = []
+    travelled = []
+
+    "Get the start node's neighbors"
+    neighbors = problem.getSuccessors(problem.getStartState())
+
+    "Run recursive function of Depth-First Search"
+    RecursiveDFS(problem, directions, travelled, problem.getStartState(), neighbors)
+    return directions
+
+
+def RecursiveDFS(problem, directions, travelled, current, nodes):
+    "Add current node to travelled list"
+    travelled.append(current)
+    "Look through neighbors of current node"
+    for node in nodes:
+        "if node is goal state add node to direction and return true"
+        if problem.isGoalState(node[0]):
+            directions.append(node[1])
+            return True
+        "if neighbor node is not a goal state and hasn't been travelled, go deeper into recursive DFS on it"
+        if node[0] not in travelled:
+            "get neighbors of current neighbor"
+            neighbors = problem.getSuccessors(node[0])
+            "if the recursive function is returning true, add current node to directions and return true"
+            if RecursiveDFS(problem, directions, travelled, node[0], neighbors):
+                directions.insert(0, node[1])
+                return True
+    "if the node is a dead end, return false"
+    return False
 
 def breadthFirstSearch(problem: SearchProblem) -> List[Directions]:
     """Search the shallowest nodes in the search tree first."""
