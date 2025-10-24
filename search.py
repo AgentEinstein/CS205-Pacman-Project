@@ -160,7 +160,75 @@ def nullHeuristic(state, problem=None) -> float:
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directions]:
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    "Initialize:"
+    "path      - list of directions"
+    path = []
+    "travelled - nodes travelled"
+    travelled = []
+    "frontier  - node queue"
+    frontier = util.PriorityQueue()
+    "cost      - a dictionary for the cost of each node with the start node set to 0"
+    cost = {problem.getStartState(): 0}
+    "start     - the start state"
+    start = problem.getStartState()
+
+    "If current state is a goal, return empty list"
+    if problem.isGoalState(start):
+        return []
+
+    "Add start state to queue"
+    frontier.push(problem.getStartState(), heuristic(problem.getStartState(), problem))
+
+    "While there are nodes in the priority queue, loop"
+    while not frontier.isEmpty():
+        "Get the current node from the top of the priority queue"
+        current = frontier.pop()
+
+        "If current node is goal state exit loop"
+        if problem.isGoalState(current):
+            directions = trace_destination(path, current)
+            return directions
+
+        "Add current node to the nodes travelled"
+        travelled.append(current)
+
+        "Iterate through node's neighbors"
+        neighbors = problem.getSuccessors(current)
+        for neighbor in neighbors:
+            "generate neighbor's total cost from start"
+            neighbor_cost = cost[current] + neighbor[2]
+            "if neighbor is unexplored and not in the queue, add to queue and add update cost of node"
+            if neighbor[0] not in travelled and neighbor[0] not in cost:
+                frontier.update(neighbor[0], neighbor_cost + heuristic(neighbor[0], problem))
+                cost[neighbor[0]] = neighbor_cost
+
+                "add to path"
+                path.append((current, neighbor[0], neighbor[1]))
+            "if neighbor's cost is less than the current cost of the node, update and remove old path"
+            if neighbor_cost < cost[neighbor[0]]:
+                frontier.update(neighbor[0], neighbor_cost + heuristic(neighbor[0], problem))
+                cost[neighbor[0]] = neighbor_cost
+
+                "remove old path and add to path"
+                path = list(filter(lambda tup: tup[1] != neighbor[0], path))
+                path.append((current, neighbor[0], neighbor[1]))
+    return []
+
+
+def trace_destination(path, parent):
+    """function to retrace the path to the destination"""
+    directions = []
+    "starting from the goal state"
+    path.reverse()
+    "iterate on the path and add direction to directions until the start is reached"
+    for i in range(0, len(path)):
+        if parent == path[i][1]:
+            parent = path[i][0]
+            directions.append(path[i][2])
+    "reverse the list of directions to get the directions from start to goal state"
+    directions.reverse()
+    return directions
+
 
 # Abbreviations
 bfs = breadthFirstSearch
