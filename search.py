@@ -222,9 +222,9 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic) -> List[Directi
             if neighbor[0] not in travelled and neighbor[0] not in cost:
                 frontier.update(neighbor[0], neighbor_cost + heuristic(neighbor[0], problem))
                 cost[neighbor[0]] = neighbor_cost
-
                 "add to path"
                 path.append((current, neighbor[0], neighbor[1]))
+
             "if neighbor's cost is less than the current cost of the node, update and remove old path"
             if neighbor_cost < cost[neighbor[0]]:
                 frontier.update(neighbor[0], neighbor_cost + heuristic(neighbor[0], problem))

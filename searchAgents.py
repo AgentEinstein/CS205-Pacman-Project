@@ -42,6 +42,7 @@ import util
 import time
 import search
 import pacman
+import math
 
 class GoWestAgent(Agent):
     "An agent that goes West until it can't."
@@ -391,15 +392,14 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
         return 0
     
 
-    minDistance = float('inf')
-    for corner in unvisitedCorners:
-        distance = abs(position[0] - corner[0]) + abs(position[1] - corner[1])
-        if distance < minDistance:
-            minDistance = distance
+    maxDistance = 0
+    size = len(unvisitedCorners)
+    for i in range(size):
+        distance = abs(position[0] - unvisitedCorners[i][0]) + abs(position[1] - unvisitedCorners[i][1]) + size - 1
+        if distance > maxDistance:
+            maxDistance = distance
     
-    return minDistance
-    return 0 # Default to trivial solution
-
+    return maxDistance
 
 
 class AStarCornersAgent(SearchAgent):
@@ -407,6 +407,7 @@ class AStarCornersAgent(SearchAgent):
     def __init__(self):
         self.searchFunction = lambda prob: search.aStarSearch(prob, cornersHeuristic)
         self.searchType = CornersProblem
+
 
 class FoodSearchProblem:
     """
