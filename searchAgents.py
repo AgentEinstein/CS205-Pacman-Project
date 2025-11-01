@@ -296,6 +296,7 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
+        return (self.startingPosition, (False, False, False, False))
         util.raiseNotDefined()
 
     def isGoalState(self, state: Any):
@@ -303,6 +304,8 @@ class CornersProblem(search.SearchProblem):
         Returns whether this search state is a goal state of the problem.
         """
         "*** YOUR CODE HERE ***"
+        position, cornersVisited = state
+        return all(cornersVisited)
         util.raiseNotDefined()
 
     def getSuccessors(self, state: Any):
@@ -317,6 +320,8 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        position, cornersVisited = state
+        x, y = position
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -326,7 +331,23 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
-
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+        
+            hitsWall = self.walls[nextx][nexty]
+        
+            if not hitsWall:
+                nextPosition = (nextx, nexty)
+            
+                newCornersVisited = list(cornersVisited)
+            
+                for i in range(len(self.corners)):
+                    if nextPosition == self.corners[i]:
+                        newCornersVisited[i] = True
+            
+                nextState = (nextPosition, tuple(newCornersVisited))
+            
+                successors.append((nextState, action, 1))
         self._expanded += 1 # DO NOT CHANGE
         return successors
 
@@ -362,6 +383,21 @@ def cornersHeuristic(state: Any, problem: CornersProblem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    position, cornersVisited = state
+    
+    unvisitedCorners = [corners[i] for i in range(len(corners)) if not cornersVisited[i]]
+    
+    if len(unvisitedCorners) == 0:
+        return 0
+    
+
+    minDistance = float('inf')
+    for corner in unvisitedCorners:
+        distance = abs(position[0] - corner[0]) + abs(position[1] - corner[1])
+        if distance < minDistance:
+            minDistance = distance
+    
+    return minDistance
     return 0 # Default to trivial solution
 
 
