@@ -490,8 +490,6 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
-    '''
     foods = foodGrid.asList()
     if not foods:
         return 0
@@ -505,7 +503,6 @@ def foodHeuristic(state: Tuple[Tuple, List[List]], problem: FoodSearchProblem):
         return dist_cache[key]
 
     return max(mdist(position, f) for f in foods)
-    '''
 
 
 class ClosestDotSearchAgent(SearchAgent):
